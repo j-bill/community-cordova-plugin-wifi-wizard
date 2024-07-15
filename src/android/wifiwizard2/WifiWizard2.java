@@ -241,7 +241,7 @@ public class WifiWizard2 extends CordovaPlugin {
     if (!wifiIsEnabled) {
       callbackContext.error("WIFI_NOT_ENABLED");
       return true; // Even though enable wifi failed, we still return true and handle error in
-                   // callback
+      // callback
     }
 
     // Actions that DO require WiFi to be enabled
@@ -2011,10 +2011,7 @@ public class WifiWizard2 extends CordovaPlugin {
 
         WifiNetworkSpecifier wifiNetworkSpecifier = builder.build();
 
-        // --
-
         NetworkRequest.Builder networkRequestBuilder1 = new NetworkRequest.Builder();
-
         networkRequestBuilder1
             .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
             .removeCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET);
@@ -2027,7 +2024,8 @@ public class WifiWizard2 extends CordovaPlugin {
         ConnectivityManager cm =
             (ConnectivityManager)
                 cordova.getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
-        ConnectivityManager.NetworkCallback networkCallback =
+
+        networkCallback =
             new ConnectivityManager.NetworkCallback() {
               @Override
               public void onAvailable(Network network) {
@@ -2129,7 +2127,8 @@ public class WifiWizard2 extends CordovaPlugin {
   }
 
   /**
-   * Remove suggested network Author: Julian Billinger (julian.billinger at admin-intelligence.com)
+   * Remove suggested network 
+   * Author: Julian Billinger (julian.billinger at admin-intelligence.com)
    */
   private void yeet(CallbackContext callbackContext, final JSONArray data) {
     Log.d(TAG, "Entering yeet");
@@ -2140,6 +2139,7 @@ public class WifiWizard2 extends CordovaPlugin {
       try {
         Log.d(TAG, "Attempting to unregister network callback");
         connectivityManager.unregisterNetworkCallback(networkCallback);
+        networkCallback = null;
         Log.d(TAG, "Network callback unregistered successfully");
         callbackContext.success("Network callback unregistered successfully");
       } catch (Exception e) {
