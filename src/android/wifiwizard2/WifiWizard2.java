@@ -72,6 +72,7 @@ public class WifiWizard2 extends CordovaPlugin {
 
   private static final String SPECIFIER_NETWORK = "specifierConnection"; //>=29
   private static final String SUGGEST_NETWORK = "suggestConnection"; //>=29
+  private static final String YEET = "yeet"; // >=29
   
   private static final String ADD_NETWORK = "add";
   private static final String REMOVE_NETWORK = "remove";
@@ -176,6 +177,11 @@ public class WifiWizard2 extends CordovaPlugin {
     if(action.equals(SPECIFIER_NETWORK))
     {
       this.specifierConnection(callbackContext, data);
+      return true;
+    }
+
+    if (action.equals(YEET)) {
+      this.yeet(callbackContext, data);
       return true;
     }
     
@@ -2137,6 +2143,37 @@ public class WifiWizard2 extends CordovaPlugin {
             return;
         }
 
+    }
+
+    /**
+     * Remove suggested network
+     * Author: Julian Billinger (julian.billinger at admin-intelligence.com)
+     */
+    private void yeet(CallbackContext callbackContext, final JSONArray data) {
+      Log.d(TAG, "Entering yeet");
+
+      if (API_VERSION > 21 && networkCallback != null) {
+        Log.d(TAG, "API_VERSION > 21 and networkCallback is not null");
+
+        try {
+          Log.d(TAG, "Attempting to unregister network callback");
+          connectivityManager.unregisterNetworkCallback(networkCallback);
+          Log.d(TAG, "Network callback unregistered successfully");
+          callbackContext.success("Network callback unregistered successfully");
+        } catch (Exception e) {
+          Log.e(TAG, "Failed to unregister network callback, Exception: " + e.getMessage());
+          callbackContext.error("Failed to unregister network callback, Exception: " + e.getMessage());
+        }
+      } else {
+        if (API_VERSION <= 21) {
+          Log.d(TAG, "API_VERSION <= 21, no action taken");
+        } else {
+          Log.d(TAG, "networkCallback is null, no action taken");
+        }
+        callbackContext.error("API_VERSION <= 21 or networkCallback is null, no action taken");
+      }
+
+      Log.d(TAG, "Exiting yeet");
     }
   
   

@@ -707,6 +707,17 @@ var WifiWizard2 = {
       cordova.exec(resolve, reject, 'WifiWizard2', 'suggestConnection', [SSID, password, wifiConfig.auth.algorithm, wifiConfig.isHiddenSSID]);
     });
   },
+
+  /**
+   * Triggers the yeet function in WifiWizard2 plugin.
+   *
+   * @returns {Promise<any>}
+   */
+    yeet: function () {
+      return new Promise(function (resolve, reject) {
+        cordova.exec(resolve, reject, 'WifiWizard2', 'yeet', []);
+      });
+    },
 };
 
 module.exports = WifiWizard2;
