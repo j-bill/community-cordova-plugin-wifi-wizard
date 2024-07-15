@@ -2,9 +2,9 @@
 [![Downloads](https://img.shields.io/npm/dm/community-cordova-plugin-wifi-wizard)](https://www.npmjs.com/package/community-cordova-plugin-wifi-wizard)
 
 
-#### This is a fork of the original plugin cordova-plugin-wifiwizard2
+#### This is a fork of the fork of plugin cordova-plugin-wifiwizard2 from EYALIN
 
-# WiFiWizard2 - 3.3.0<!-- omit in toc -->
+# WiFiWizard2 - 3.4.0<!-- omit in toc -->
 
 ## Table of Contents<!-- omit in toc -->
 
@@ -20,6 +20,8 @@
 - [Android Functions](#android-functions)
   - [Connect vs Enable](#connect-vs-enable)
   - [Disconnect vs Disable](#disconnect-vs-disable)
+  - [New to 3.4.0+](#new-to-340)
+  - [New to 3.3.0+](#new-to-330)
   - [New to 3.2.0+](#new-to-320)
   - [New to 3.1.1+](#new-to-311)
   - [New to 3.0.0+](#new-to-300)
@@ -32,6 +34,12 @@
 - [Examples](#examples)
   - [Ionic/Angular Example (User Provided)](#ionicangular-example-user-provided)
 - [Changelog:](#changelog)
+
+# A new fork
+
+Several functions of this plugin have long been deprecated. For android I needed a way to disconnect a network that we connect to, but all remove, disable, disconnect, etc. functions are not working.
+
+Hence my own addition, at your convenience.
 
 # About
 
@@ -396,7 +404,7 @@ WifiWizard2.getConnectedNetworkID();
 
 - `GET_CONNECTED_NET_ID_ERROR` Unable to determine currently connected network ID (may not be connected)
 
-## New to 3.4.0
+## New to 3.4.0+
 
 ```javascript
 WifiWizard2.releaseNetwork();
