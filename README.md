@@ -189,6 +189,21 @@ WifiWizard2.suggestConnection(ssid, password, algorithm, isHiddenSSID);
 - `STATUS_NETWORK_SUGGESTIONS_ERROR` Android returned error when network can not be suggested
 - `SUGGESTION_INVALID_API_VERSION` Android this function is accesible only form Api version 29 or higher
 
+## WiFi Release Network
+
+This function releases the network connection established through the WiFi connection specifier. It unregisters the network callback to discontinue the specific network connection.
+
+```javascript
+WifiWizard2.releaseNetwork();
+```
+
+- `releaseNetwork` does not take any parameters.
+
+**Thrown Errors**
+
+- `API_VERSION <= 21 or networkCallback is null, no action taken` - The function cannot be executed because the API version is below 21 or the network callback is not initialized.
+- `Failed to unregister network callback, Exception: <exception message>` - An error occurred while trying to unregister the network callback.
+
 ## WiFi connection Specifier
 
 Android 10 Api >= 29 Specifier connection. Native Ui show modal for connect one device to your Phone.
@@ -380,6 +395,13 @@ WifiWizard2.getConnectedNetworkID();
 **Thrown Errors**
 
 - `GET_CONNECTED_NET_ID_ERROR` Unable to determine currently connected network ID (may not be connected)
+
+## New to 3.4.0
+
+```javascript
+WifiWizard2.releaseNetwork();
+```
+- Android 10 Api >= 29: Removes connections created through specifierConnection
 
 ## New to 3.3.0+
 

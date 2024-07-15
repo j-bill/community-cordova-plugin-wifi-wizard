@@ -709,13 +709,13 @@ var WifiWizard2 = {
   },
 
   /**
-   * Triggers the yeet function in WifiWizard2 plugin.
+   * Triggers the releaseNetwork function in WifiWizard2 plugin.
    *
    * @returns {Promise<any>}
    */
-    yeet: function () {
+    releaseNetwork: function () {
       return new Promise(function (resolve, reject) {
-        cordova.exec(resolve, reject, 'WifiWizard2', 'yeet', []);
+        cordova.exec(resolve, reject, 'WifiWizard2', 'releaseNetwork', []);
       });
     },
 };

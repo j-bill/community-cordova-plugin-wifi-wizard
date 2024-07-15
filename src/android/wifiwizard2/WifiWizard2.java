@@ -61,7 +61,7 @@ public class WifiWizard2 extends CordovaPlugin {
 
   private static final String SPECIFIER_NETWORK = "specifierConnection"; // >=29
   private static final String SUGGEST_NETWORK = "suggestConnection"; // >=29
-  private static final String YEET = "yeet"; // >=29
+  private static final String RELEASE_NETWORK = "releaseNetwork"; // >=29
 
   private static final String ADD_NETWORK = "add";
   private static final String REMOVE_NETWORK = "remove";
@@ -178,8 +178,8 @@ public class WifiWizard2 extends CordovaPlugin {
       return true;
     }
 
-    if (action.equals(YEET)) {
-      this.yeet(callbackContext, data);
+    if (action.equals(RELEASE_NETWORK)) {
+      this.releaseNetwork(callbackContext, data);
       return true;
     }
 
@@ -2130,8 +2130,8 @@ public class WifiWizard2 extends CordovaPlugin {
    * Remove suggested network 
    * Author: Julian Billinger (julian.billinger at admin-intelligence.com)
    */
-  private void yeet(CallbackContext callbackContext, final JSONArray data) {
-    Log.d(TAG, "Entering yeet");
+  private void releaseNetwork(CallbackContext callbackContext, final JSONArray data) {
+    Log.d(TAG, "Entering releaseNetwork");
 
     if (API_VERSION > 21 && networkCallback != null) {
       Log.d(TAG, "API_VERSION > 21 and networkCallback is not null");
@@ -2156,6 +2156,6 @@ public class WifiWizard2 extends CordovaPlugin {
       callbackContext.error("API_VERSION <= 21 or networkCallback is null, no action taken");
     }
 
-    Log.d(TAG, "Exiting yeet");
+    Log.d(TAG, "Exiting releaseNetwork");
   }
 }
