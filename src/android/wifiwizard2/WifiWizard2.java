@@ -2127,8 +2127,8 @@ public class WifiWizard2 extends CordovaPlugin {
   }
 
   /**
-   * Remove suggested network 
-   * Author: Julian Billinger (julian.billinger at admin-intelligence.com)
+   * Remove specifierConnection created network and try to reconnect to the best available network. Author: Julian
+   * Billinger (julian.billinger at admin-intelligence.com)
    */
   private void releaseNetwork(CallbackContext callbackContext, final JSONArray data) {
     Log.d(TAG, "Entering releaseNetwork");
@@ -2138,10 +2138,37 @@ public class WifiWizard2 extends CordovaPlugin {
 
       try {
         Log.d(TAG, "Attempting to unregister network callback");
-        connectivityManager.unregisterNetworkCallback(networkCallback);
+        ConnectivityManager cm =
+            (ConnectivityManager)
+                cordova.getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        cm.unregisterNetworkCallback(networkCallback);
         networkCallback = null;
         Log.d(TAG, "Network callback unregistered successfully");
-        callbackContext.success("Network callback unregistered successfully");
+
+        // Register a callback to reconnect to the best available network
+        ConnectivityManager.NetworkCallback defaultNetworkCallback =
+            new ConnectivityManager.NetworkCallback() {
+              @Override
+              public void onAvailable(Network network) {
+                super.onAvailable(network);
+                Log.d(TAG, "Reconnected to the best available network: " + network);
+                // Optionally notify the application layer
+                callbackContext.success("Reconnected to the best available network.");
+              }
+
+              @Override
+              public void onLost(Network network) {
+                super.onLost(network);
+                Log.d(TAG, "Lost connection to network: " + network);
+                // Handle loss of network connection
+              }
+            };
+
+        NetworkRequest.Builder requestBuilder = new NetworkRequest.Builder();
+        requestBuilder.addTransportType(NetworkCapabilities.TRANSPORT_WIFI);
+        requestBuilder.addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET);
+        cm.registerDefaultNetworkCallback(defaultNetworkCallback);
+
       } catch (Exception e) {
         Log.e(TAG, "Failed to unregister network callback, Exception: " + e.getMessage());
         callbackContext.error(
