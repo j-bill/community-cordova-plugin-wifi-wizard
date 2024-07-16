@@ -38,6 +38,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.provider.Settings;
 import android.util.Log;
+import java.io.IOException;
 import java.lang.InterruptedException;
 import java.net.HttpURLConnection;
 import java.net.Inet4Address;
@@ -2127,7 +2128,7 @@ public class WifiWizard2 extends CordovaPlugin {
   }
 
   /**
-   * Remove specifierConnection created network and try to reconnect to the best available network.
+   * Remove specifierConnection created network and unbind process from network
    * Author: Julian Billinger (julian.billinger at admin-intelligence.com)
    */
   private void releaseNetwork(CallbackContext callbackContext, final JSONArray data) {
@@ -2143,40 +2144,9 @@ public class WifiWizard2 extends CordovaPlugin {
                 cordova.getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
         cm.unregisterNetworkCallback(networkCallback);
         networkCallback = null;
+        cm.bindProcessToNetwork(null);
+
         Log.d(TAG, "Network callback unregistered successfully");
-
-        // Register a callback to reconnect to the best available network
-        ConnectivityManager.NetworkCallback defaultNetworkCallback =
-            new ConnectivityManager.NetworkCallback() {
-              @Override
-              public void onAvailable(Network network) {
-                super.onAvailable(network);
-                String networkName = getCurrentSsid();
-
-                Log.d(TAG, "Reconnected to the best available network: " + networkName);
-
-                // Verify actual internet connectivity
-                if (isInternetAvailable()) {
-                  callbackContext.success(
-                      "Reconnected to the best available network: " + networkName);
-                } else {
-                  callbackContext.error("Reconnected to the network but no internet access.");
-                }
-              }
-
-              @Override
-              public void onLost(Network network) {
-                super.onLost(network);
-                Log.d(TAG, "Lost connection to network: " + network);
-                // Handle loss of network connection
-              }
-            };
-
-        NetworkRequest.Builder requestBuilder = new NetworkRequest.Builder();
-        requestBuilder.addTransportType(NetworkCapabilities.TRANSPORT_WIFI);
-        requestBuilder.addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET);
-        cm.registerDefaultNetworkCallback(defaultNetworkCallback);
-
       } catch (Exception e) {
         Log.e(TAG, "Failed to unregister network callback, Exception: " + e.getMessage());
         callbackContext.error(
@@ -2192,36 +2162,5 @@ public class WifiWizard2 extends CordovaPlugin {
     }
 
     Log.d(TAG, "Exiting releaseNetwork");
-  }
-
-  private String getCurrentSsid() {
-    WifiManager wifiManager =
-        (WifiManager)
-            cordova.getActivity().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-    if (wifiManager != null) {
-      WifiInfo wifiInfo = wifiManager.getConnectionInfo();
-      if (wifiInfo != null) {
-        String ssid = wifiInfo.getSSID();
-        if (ssid != null) {
-          return ssid.replace("\"", ""); // Remove quotes around the SSID
-        }
-      }
-    }
-    return "Unknown SSID";
-  }
-
-  private boolean isInternetAvailable() {
-    try {
-      URL url = new URL("https://www.google.com");
-      HttpURLConnection urlc = (HttpURLConnection) url.openConnection();
-      urlc.setRequestProperty("User-Agent", "Android");
-      urlc.setRequestProperty("Connection", "close");
-      urlc.setConnectTimeout(1000); // Timeout in milliseconds
-      urlc.connect();
-      return (urlc.getResponseCode() == 200);
-    } catch (IOException e) {
-      Log.e(TAG, "Error checking internet connection", e);
-      return false;
-    }
   }
 }
