@@ -2127,8 +2127,8 @@ public class WifiWizard2 extends CordovaPlugin {
   }
 
   /**
-   * Remove specifierConnection created network and try to reconnect to the best available network. Author: Julian
-   * Billinger (julian.billinger at admin-intelligence.com)
+   * Remove specifierConnection created network and try to reconnect to the best available network.
+   * Author: Julian Billinger (julian.billinger at admin-intelligence.com)
    */
   private void releaseNetwork(CallbackContext callbackContext, final JSONArray data) {
     Log.d(TAG, "Entering releaseNetwork");
@@ -2151,9 +2151,17 @@ public class WifiWizard2 extends CordovaPlugin {
               @Override
               public void onAvailable(Network network) {
                 super.onAvailable(network);
-                Log.d(TAG, "Reconnected to the best available network: " + network);
-                // Optionally notify the application layer
-                callbackContext.success("Reconnected to the best available network.");
+                String networkName = getCurrentSsid();
+
+                Log.d(TAG, "Reconnected to the best available network: " + networkName);
+
+                // Verify actual internet connectivity
+                if (isInternetAvailable()) {
+                  callbackContext.success(
+                      "Reconnected to the best available network: " + networkName);
+                } else {
+                  callbackContext.error("Reconnected to the network but no internet access.");
+                }
               }
 
               @Override
@@ -2184,5 +2192,36 @@ public class WifiWizard2 extends CordovaPlugin {
     }
 
     Log.d(TAG, "Exiting releaseNetwork");
+  }
+
+  private String getCurrentSsid() {
+    WifiManager wifiManager =
+        (WifiManager)
+            cordova.getActivity().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+    if (wifiManager != null) {
+      WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+      if (wifiInfo != null) {
+        String ssid = wifiInfo.getSSID();
+        if (ssid != null) {
+          return ssid.replace("\"", ""); // Remove quotes around the SSID
+        }
+      }
+    }
+    return "Unknown SSID";
+  }
+
+  private boolean isInternetAvailable() {
+    try {
+      URL url = new URL("https://www.google.com");
+      HttpURLConnection urlc = (HttpURLConnection) url.openConnection();
+      urlc.setRequestProperty("User-Agent", "Android");
+      urlc.setRequestProperty("Connection", "close");
+      urlc.setConnectTimeout(1000); // Timeout in milliseconds
+      urlc.connect();
+      return (urlc.getResponseCode() == 200);
+    } catch (IOException e) {
+      Log.e(TAG, "Error checking internet connection", e);
+      return false;
+    }
   }
 }
